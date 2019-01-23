@@ -1,11 +1,14 @@
 FROM node:10-alpine as build
 
-RUN apk add --no-cache git curl
+ARG VERSION=v1.7.0
 
-RUN git clone https://github.com/DivanteLtd/vue-storefront-api.git /opt/vue-storefront-api \
+RUN apk add --no-cache git python build-base
+
+RUN wget -q0- https://github.com/DivanteLtd/vue-storefront-api/archive/${VERSION}.tar.gz | tar -xvz -C /opt/vue-storefront-api
     && cd /opt/vue-storefront-api \
     && yarn install \
-    && cp /opt/vue-storefront-api/config/default.json /opt/vue-storefront-api/config/local.json
+    && cp /opt/vue-storefront-api/config/default.json /opt/vue-storefront-api/config/local.json \
+    && yarn build
 
 FROM node:10-alpine
 
