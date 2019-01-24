@@ -13,6 +13,8 @@ RUN wget -qO- https://github.com/DivanteLtd/vue-storefront-api/archive/v${VERSIO
 
 FROM node:10-alpine
 
+RUN apk add --no-cache imagemagick
+
 COPY --from=0 /opt/vue-storefront-api /opt/vue-storefront-api
 
 COPY entrypoint.sh /
