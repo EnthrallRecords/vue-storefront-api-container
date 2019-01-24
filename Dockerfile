@@ -4,7 +4,7 @@ ARG VERSION=v1.7.0
 
 RUN apk add --no-cache git python build-base
 
-RUN wget -q0- https://github.com/DivanteLtd/vue-storefront-api/archive/${VERSION}.tar.gz | tar -xvz -C /opt/vue-storefront-api
+RUN wget -q0- https://github.com/DivanteLtd/vue-storefront-api/archive/${VERSION}.tar.gz | tar -xvz -C /opt/vue-storefront-api \
     && cd /opt/vue-storefront-api \
     && yarn install \
     && cp /opt/vue-storefront-api/config/default.json /opt/vue-storefront-api/config/local.json \
