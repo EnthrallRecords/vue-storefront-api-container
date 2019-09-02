@@ -25,8 +25,8 @@ spec:
         PATH = "/busybox:/kaniko:$PATH"
       }
       steps {
-        git branch: env.BRANCH_NAME,
-          url: 'https://github.com/EnthrallRecords/vue-storefront-api-container.git'
+        checkout([$class: 'GitSCM', branches: [[name: env.GIT_BRANCH]],
+          userRemoteConfigs: [[url: 'https://github.com/EnthrallRecords/vue-storefront-api-container.git']]])
         container(name: 'kaniko', shell: '/busybox/sh') {
           sh '''#!/busybox/sh
           /kaniko/executor -c `pwd` --skip-tls-verify --destination=containers.internal/vue-storefront-api:$VER --destination=containers.internal/vue-storefront-api:$BUILD_ID --destination=containers.internal/vue-storefront-api:latest 
