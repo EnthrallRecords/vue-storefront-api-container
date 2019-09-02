@@ -1,6 +1,6 @@
 FROM node:10-alpine as build
 
-ARG VERSION=1.7.0
+ARG VERSION=1.8.1
 
 RUN apk add --no-cache git python build-base
 
