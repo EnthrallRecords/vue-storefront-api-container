@@ -1,15 +1,25 @@
 pipeline {
+  agent none
   environment {
     VER = "1.8.1"
   }
-  agent {
-    kubernetes {
-      label "kaniko"
-      yaml """
+  stages {
+    stage('Build with Kaniko') {
+      agent {
+        kubernetes {
+          label "kaniko"
+          yaml """
 kind: Pod
 metadata:
   name: kaniko
 spec:
+  nodeSelector:
+    hardware: minipc
+  tolerations:
+  - key: "resource"
+    operator: "Equal"
+    value: "limited"
+    effect: "PreferNoSchedule"
   containers:
   - name: kaniko
     image: gcr.io/kaniko-project/executor:debug-v0.10.0
@@ -17,10 +27,8 @@ spec:
     - /busybox/cat
     tty: true
 """
-    }
-  }
-  stages {
-    stage('Build with Kaniko') {
+        }
+      }
       environment {
         PATH = "/busybox:/kaniko:$PATH"
       }
@@ -35,6 +43,28 @@ spec:
       }
     }
     stage('Deploy') {
+      agent {
+        kubernetes {
+          label "kubectl"
+          yaml """
+kind: Pod
+metadata:
+  name: kaniko
+spec:
+  serviceAccount: jenkins
+  containers:
+  - name: kubectl
+    image: containers.internal/kubectl:latest
+    imagePullPolicy: Always
+    command:
+    - sh
+    args:
+    - -c
+    - cat
+    tty: true
+""" 
+        }
+      }
       steps {
         container(name: 'kubectl', shell: '/bin/sh') {
           sh '''#!/bin/sh
