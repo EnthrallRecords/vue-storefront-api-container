@@ -1,6 +1,6 @@
-FROM node:10-alpine as build
+FROM node:13-alpine as build
 
-ARG VERSION=1.10.0
+ARG VERSION=1.11.0
 
 RUN apk add --no-cache git python build-base
 
@@ -11,7 +11,7 @@ RUN wget -qO- https://github.com/DivanteLtd/vue-storefront-api/archive/v${VERSIO
     && cp /opt/vue-storefront-api/config/default.json /opt/vue-storefront-api/config/local.json \
     && yarn build
 
-FROM node:10-alpine
+FROM node:13-alpine
 
 RUN apk add --no-cache imagemagick
 

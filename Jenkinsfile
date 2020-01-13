@@ -1,7 +1,7 @@
 pipeline {
   agent none
   environment {
-    VER = "1.10.0"
+    VER = "1.11.0"
   }
   stages {
     stage('Build with Kaniko') {
@@ -22,7 +22,7 @@ spec:
     effect: "PreferNoSchedule"
   containers:
   - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug-v0.10.0
+    image: gcr.io/kaniko-project/executor:debug-v0.15.0
     command:
     - /busybox/cat
     tty: true
