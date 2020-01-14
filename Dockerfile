@@ -11,7 +11,13 @@ RUN wget -qO- https://github.com/DivanteLtd/vue-storefront-api/archive/v${VERSIO
     && cp /opt/vue-storefront-api/config/default.json /opt/vue-storefront-api/config/local.json \
     && yarn build
 
+RUN cd /opt/vue-storefront-api/node_modules \
+    && rm -rf /opt/vue-storefront-api/node_modules/mage2vuestorefront \
+    && git clone https://github.com/DivanteLtd/mage2vuestorefront.git -b feature/es7 mage2vuestorefront
+
 FROM node:13-alpine
+
+ENV ELASTICSEARCH_API_VERSION=7.1
 
 RUN apk add --no-cache imagemagick
 
