@@ -1,13 +1,12 @@
 pipeline {
   agent none
   environment {
-    VER = "1.11.0"
+    VER = "1.12.3"
   }
   stages {
     stage('Build with Kaniko') {
       agent {
         kubernetes {
-          label "kaniko"
           yaml """
 kind: Pod
 metadata:
@@ -22,7 +21,7 @@ spec:
     effect: "PreferNoSchedule"
   containers:
   - name: kaniko
-    image: gcr.io/kaniko-project/executor:debug-v0.15.0
+    image: gcr.io/kaniko-project/executor:debug-v1.3.0
     command:
     - /busybox/cat
     tty: true
