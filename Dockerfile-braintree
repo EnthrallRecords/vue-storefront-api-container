@@ -1,0 +1,35 @@
+FROM node:15-alpine as build
+
+ARG VERSION=1.12.3
+
+RUN apk add --no-cache git python build-base && \
+    npm install -g npm
+
+RUN cd /tmp && wget -qO- https://github.com/DivanteLtd/vue-storefront-api/archive/v${VERSION}.tar.gz | tar -xvz \
+    && mv /tmp/vue-storefront-api-${VERSION} /opt/vue-storefront-api
+
+WORKDIR /opt/vue-storefront-api
+
+RUN git clone https://github.com/danrcoull/vsf-payment-braintree.git /tmp/payment-braintree && \
+    cp -r /tmp/payment-braintree/API/braintree /opt/vue-storefront-api/src/api/extensions/
+
+RUN yarn add -W braintree@2.24.0
+
+RUN yarn install
+
+RUN cp /opt/vue-storefront-api/config/default.json /opt/vue-storefront-api/config/local.json \
+    && yarn build
+
+FROM node:15-alpine
+
+ENV ELASTICSEARCH_API_VERSION=7.1
+
+RUN apk add --no-cache imagemagick
+
+COPY --from=0 /opt/vue-storefront-api /opt/vue-storefront-api
+
+COPY entrypoint.sh /
+
+WORKDIR /opt/vue-storefront-api
+
+ENTRYPOINT "/entrypoint.sh"
