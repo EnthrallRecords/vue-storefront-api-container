@@ -1,6 +1,6 @@
 FROM node:15-alpine as build
 
-ARG VERSION=1.12.3
+ARG VERSION=1.12.4
 
 RUN apk add --no-cache git python build-base
 

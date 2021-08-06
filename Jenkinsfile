@@ -4,7 +4,7 @@ pipeline {
     VER = "1.12.4"
   }
   stages {
-    stage('Build with Kaniko') {
+    stage('Build API') {
       agent {
         kubernetes {
           yamlMergeStrategy merge()
@@ -33,7 +33,36 @@ spec:
           /kaniko/executor --build-arg VERSION=$VER -c `pwd` --skip-tls-verify \
             --destination=containers.internal/vue-storefront-api:$VER \
             --destination=containers.internal/vue-storefront-api:$BUILD_ID
-
+          '''
+        }
+      }
+    }
+    stage('Build API with Braintree') {
+      agent {
+        kubernetes {
+          yamlMergeStrategy merge()
+          yaml """
+kind: Pod
+metadata:
+  name: kaniko
+spec:
+  containers:
+  - name: kaniko
+    image: gcr.io/kaniko-project/executor:v1.6.0-debug
+    command:
+    - /busybox/cat
+    tty: true
+"""
+        }
+      }
+      environment {
+        PATH = "/busybox:/kaniko:$PATH"
+      }
+      steps {
+        checkout([$class: 'GitSCM', branches: [[name: env.GIT_BRANCH]],
+          userRemoteConfigs: [[url: 'https://github.com/EnthrallRecords/vue-storefront-api-container.git']]])
+        container(name: 'kaniko', shell: '/busybox/sh') {
+          sh '''#!/busybox/sh
           /kaniko/executor --build-arg VERSION=$VER -c `pwd` -f Dockerfile-braintree --skip-tls-verify \
             --destination=containers.internal/vue-storefront-api:braintree-$VER \
             --destination=containers.internal/vue-storefront-api:braintree-$BUILD_ID
