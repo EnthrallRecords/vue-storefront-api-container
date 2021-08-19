@@ -1,8 +1,9 @@
-FROM node:15-alpine as build
+FROM proxy.containers.internal/library/node:15-alpine as build
 
 ARG VERSION=1.12.4
 
-RUN apk add --no-cache git python build-base
+RUN apk add --no-cache git python build-base && \
+    npm install -g npm
 
 RUN wget -qO- https://github.com/DivanteLtd/vue-storefront-api/archive/v${VERSION}.tar.gz | tar -xvz \
     && mv vue-storefront-api-${VERSION} /opt/vue-storefront-api \
@@ -15,7 +16,7 @@ RUN wget -qO- https://github.com/DivanteLtd/vue-storefront-api/archive/v${VERSIO
 #     && rm -rf /opt/vue-storefront-api/node_modules/mage2vuestorefront \
 #     && git clone https://github.com/DivanteLtd/mage2vuestorefront.git -b feature/es7 mage2vuestorefront
 
-FROM node:15-alpine
+FROM proxy.containers.internal/library/node:15-alpine
 
 ENV ELASTICSEARCH_API_VERSION=7.1
 

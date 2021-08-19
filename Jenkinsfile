@@ -7,19 +7,7 @@ pipeline {
     stage('Build API') {
       agent {
         kubernetes {
-          yamlMergeStrategy merge()
-          yaml """
-kind: Pod
-metadata:
-  name: kaniko
-spec:
-  containers:
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:v1.6.0-debug
-    command:
-    - /busybox/cat
-    tty: true
-"""
+          inheritFrom 'kaniko'
         }
       }
       environment {
@@ -40,19 +28,7 @@ spec:
     stage('Build API with Braintree') {
       agent {
         kubernetes {
-          yamlMergeStrategy merge()
-          yaml """
-kind: Pod
-metadata:
-  name: kaniko
-spec:
-  containers:
-  - name: kaniko
-    image: gcr.io/kaniko-project/executor:v1.6.0-debug
-    command:
-    - /busybox/cat
-    tty: true
-"""
+          inheritFrom 'kaniko'
         }
       }
       environment {
